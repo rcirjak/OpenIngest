@@ -4,9 +4,11 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-API-009688?logo=fastapi&logoColor=white)](./OpenIngest/serve.py)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-OpenIngest builds **in-depth AI/RAG knowledge datasets** from average, messy documentation.
+OpenIngest is a simple modular builder of **in-depth AI/RAG knowledge datasets** from average, messy documentation.
 
-It converts DOCX/PDF files into structured records that include source context, hierarchy, generated Q/A, embeddings, and traceability fields—so the output is retrieval-ready, not just raw text.
+I built it while working on a low-level local security-critical assistant for a finance-software firm. Most Github projects rely on novelty but this is just a act of my altruism beacuse I couldn't find something that would save me so much time like having this would have. I am happy if a single dev uses it to save time, even tho building it helped me understand rag architecture much better. 
+
+It converts DOCX/PDF files into structured records that include source context, hierarchy, optional generated Q/A, embeddings, and traceability fields—so the output is retrieval-ready, not just raw text.
 
 ## Table of Contents
 
