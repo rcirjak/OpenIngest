@@ -1,22 +1,35 @@
-<img src="assets-for-github/logo.svg" alt="Logo" width="200">
-# OpenIngest
 
-[![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](./pyproject.toml)
-[![FastAPI](https://img.shields.io/badge/FastAPI-API-009688?logo=fastapi&logoColor=white)](./OpenIngest/serve.py)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+<p align="center">
+  <img src="assets-for-github/logo.svg" alt="OpenIngest logo" width="100">
+</p>
 
-OpenIngest is a simple modular builder of **in-depth AI/RAG knowledge datasets** from average, messy documentation.
+<h1 align="center">OpenIngest</h1>
 
-I built it while working on a low-level local security-critical assistant for a finance-software firm. Most Github projects rely on novelty but this is just a act of my altruism beacuse I couldn't find something that would save me so much time like having this would have. I am happy if a single dev uses it to save time, even tho building it helped me understand rag architecture much better. 
+<p align="center">
+  <a href="./pyproject.toml">
+    <img src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white" alt="Python 3.11+">
+  </a>
+  <a href="./OpenIngest/serve.py">
+    <img src="https://img.shields.io/badge/FastAPI-API-009688?logo=fastapi&logoColor=white" alt="FastAPI">
+  </a>
+  <a href="./LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License">
+  </a>
+</p>
 
-It converts DOCX/PDF files into structured records that include source context, hierarchy, optional generated Q/A, embeddings, and traceability fields—so the output is retrieval-ready, not just raw text.
+OpenIngest is a simple, modular builder of **in-depth AI/RAG knowledge datasets** from ordinary, messy documentation.
+
+I built it while working on a low-level, security-critical local assistant for a finance-software firm. Many GitHub projects focus on novelty, but this project came from a practical need: I couldn't find a tool that would have saved me as much time as this one could have. If it saves even a single developer time, the effort is worthwhile. Building it also helped me understand RAG architecture much more deeply.
+
+It converts DOCX/PDF files into structured records that include source context, hierarchy, optional generated Q&A, embeddings, and traceability fields—so the output is retrieval-ready, not just raw text.
 
 ## Table of Contents
 
 - [Why OpenIngest](#why-openingest)
 - [Workflow](#workflow)
 - [Extreme Configurability](#extreme-configurability)
-- [Output Architecture (Oracle is an Example)](#output-architecture-oracle-is-an-example)
+  - [Custom Summarizer Fields](#custom-summarizer-fields)
+- [Output Architecture (Oracle Is an Example)](#output-architecture-oracle-is-an-example)
 - [Create a Custom Writer in 5 Minutes](#create-a-custom-writer-in-5-minutes)
 - [Quick Start](#quick-start)
 
@@ -24,117 +37,117 @@ It converts DOCX/PDF files into structured records that include source context, 
 
 Real documentation is usually not RAG-ready:
 
-- inconsistent structure
-- long procedural blocks
-- critical meaning hidden in screenshots
-- mixed tables, notes, steps, and troubleshooting
+- Inconsistent structure
+- Long procedural blocks
+- Critical meaning hidden in screenshots
+- Mixed tables, notes, steps, and troubleshooting
 
 OpenIngest transforms that into structured knowledge with:
 
-- `KONTEKST` (grounded chunk text)
-- `PITANJE` / `ODGOVOR` (retrieval-friendly intent + concise answer)
-- breadcrumbs + page ranges
-- embeddings + model provenance
-- stable IDs (`DOC_ID`, `SECTION_ID`, `CHUNK_ID`)
+- `KONTEKST` — grounded chunk text
+- `PITANJE` / `ODGOVOR` — retrieval-friendly intent and concise answers
+- Breadcrumbs and page ranges
+- Embeddings and model provenance
+- Stable IDs (`DOC_ID`, `SECTION_ID`, `CHUNK_ID`)
 
 ## Workflow
 
-1. Extract blocks from DOCX/PDF
-2. Extract images and optionally caption with vision
-3. Merge image descriptions inline
-4. Compute heading breadcrumbs
-5. Detect parent sections
-6. Split into child chunks (token/overlap aware)
-7. Generate questions/summaries/keywords
-8. Embed chunks
-9. Write records via selected writer
+1. Extract blocks from DOCX/PDF.
+2. Extract images and optionally caption them with vision models.
+3. Merge image descriptions inline.
+4. Compute heading breadcrumbs.
+5. Detect parent sections.
+6. Split into child chunks using token- and overlap-aware strategies.
+7. Generate questions, summaries, and keywords.
+8. Embed chunks.
+9. Write records through the selected writer.
 
 ## Extreme Configurability
 
 OpenIngest is intentionally configurable at every stage.
 
-- **Config sources**: defaults, JSON/YAML config file, environment variables
-- **Chunking**: mode (`procedure`/`structure`/`window`/`semantic`), token targets, overlap, heading/keyword heuristics, OCR language
-- **Enrichment**: language strategy, image captions, summaries, synthetic questions, prompts
-- **Custom summarizer fields**: declare chunk-level dynamic fields (`enum`, `freelist`, `freeparagraph`) and have them generated during chunk enrichment
-- **Embedding**: model, dimensions, batch size, input template
-- **Pipeline control**: per-stage enablement (`extract`, `chunk`, `enrich_text`, `embed`, `write`, etc.)
-- **Writer mapping**: destination field mapping is configurable via `writer.mapping`
+- **Config sources:** Defaults, JSON/YAML configuration files, and environment variables.
+- **Chunking:** Mode (`procedure`, `structure`, `window`, `semantic`), token targets, overlap, heading and keyword heuristics, and OCR language.
+- **Enrichment:** Language strategy, image captions, summaries, synthetic questions, and prompts.
+- **Custom summarizer fields:** Declare dynamic chunk-level fields (`enum`, `freelist`, `freeparagraph`) and generate them during chunk enrichment.
+- **Embedding:** Model, dimensions, batch size, and input template.
+- **Pipeline control:** Per-stage enablement (`extract`, `chunk`, `enrich_text`, `embed`, `write`, etc.).
+- **Writer mapping:** Configure destination field mappings through `writer.mapping`.
 
-This means the same core pipeline can be adapted to very different documentation styles, data contracts, and storage backends.
+The same core pipeline can be adapted to different documentation styles, data contracts, and storage backends.
 
-### Custom summarizer fields
+### Custom Summarizer Fields
 
-You can declare custom fields in config and they will be injected into chunk summarization prompts dynamically.
+You can declare custom fields in configuration and inject them dynamically into chunk summarization prompts.
 
 Each field declaration supports:
 
-- `name`: output field name (letters, numbers, underscore; starts with letter/underscore)
-- `type`: `enum` | `freelist` | `freeparagraph`
-- `description`: instruction for what the model should extract/generate
-- `required`: optional, default `false`
-- `options`: required for `enum`, forbidden for other types
+- `name`: Output field name using letters, numbers, and underscores; must start with a letter or underscore.
+- `type`: `enum`, `freelist`, or `freeparagraph`.
+- `description`: Instructions describing what the model should extract or generate.
+- `required`: Optional; defaults to `false`.
+- `options`: Required for `enum` and forbidden for other types.
 
 Example:
 
 ```yaml
 enrichment:
-	custom_fields:
-		- name: app_id
-			type: enum
-			description:
-				- Classify the application identifier used by this chunk.
-				- Use the identifier that best matches the source application or business context.
-				- Return exactly one of the configured enum values.
-			required: true
-			options: ["1", "2", "3", "10"]
+  custom_fields:
+    - name: app_id
+      type: enum
+      description:
+        - Classify the application identifier used by this chunk.
+        - Use the identifier that best matches the source application or business context.
+        - Return exactly one of the configured enum values.
+      required: true
+      options: ["1", "2", "3", "10"]
 
-		- name: impact_level
-			type: enum
-			description:
-				- Classify the operational impact severity of this chunk.
-				- Prefer the highest severity that is directly supported by the chunk content.
-			required: true
-			options: [low, medium, high]
+    - name: impact_level
+      type: enum
+      description:
+        - Classify the operational impact severity of this chunk.
+        - Prefer the highest severity directly supported by the chunk content.
+      required: true
+      options: [low, medium, high]
 
-		- name: affected_modules
-			type: freelist
-			description:
-				- List all modules/systems explicitly mentioned as impacted.
-				- Use concise names only.
+    - name: affected_modules
+      type: freelist
+      description:
+        - List all modules or systems explicitly mentioned as impacted.
+        - Use concise names only.
 
-		- name: operator_note
-			type: freeparagraph
-			description:
-				- Write a short operator-facing paragraph with the key caution.
-				- Keep it direct and actionable.
+    - name: operator_note
+      type: freeparagraph
+      description:
+        - Write a short operator-facing paragraph with the key caution.
+        - Keep it direct and actionable.
 ```
 
-Generated values are stored in `text.custom_fields` in each output record, so writer mappings can target paths such as:
+Generated values are stored in `text.custom_fields` in each output record, allowing writer mappings to target paths such as:
 
 - `text.custom_fields.impact_level`
 - `text.custom_fields.affected_modules`
 - `text.custom_fields.operator_note`
 
-## Output Architecture (Oracle is an Example)
+## Output Architecture (Oracle Is an Example)
 
-OpenIngest output is **writer-driven**.
+OpenIngest uses a **writer-driven output architecture**.
 
-- Current built-ins: `jsonl`, `oracle23ai`
-- The Oracle writer in this repo reflects a **specific schema used by one application at my current firm**
-- It is provided as a **reference implementation**, not a platform limitation
+- Current built-in writers: `jsonl`, `oracle23ai`.
+- The Oracle writer reflects a specific schema used by one application at my current firm.
+- It is provided as a **reference implementation**, not a platform limitation.
 
-You can target alternative database architectures by adding another writer implementation (same `Writer` interface) and selecting it through `writer.kind`.
+You can target alternative database architectures by implementing another writer using the same `Writer` interface and selecting it through `writer.kind`.
 
-In other words: Oracle is one adapter example; the architecture is extensible by design.
+Oracle is one adapter example; the architecture is extensible by design.
 
 ## Create a Custom Writer in 5 Minutes
 
-1. Create a new file in `OpenIngest/writers/`, for example `mydb_writer.py`.
+1. Create a file in `OpenIngest/writers/`, for example `mydb_writer.py`.
 2. Implement the `Writer` interface from `OpenIngest.writers.base`.
-3. Convert each `ChunkRecord` into your DB/API payload.
-4. Return a `WriteResult` with counts and destination.
-5. Register/select your writer via `writer.kind` in config.
+3. Convert each `ChunkRecord` into your database or API payload.
+4. Return a `WriteResult` containing counts and the destination.
+5. Register and select your writer through `writer.kind` in configuration.
 
 Minimal example:
 
@@ -144,20 +157,20 @@ from OpenIngest.models import ChunkRecord
 
 
 class MyDbWriter(Writer):
-		def write(self, records: list[ChunkRecord]) -> WriteResult:
-				# map records -> your storage schema, then insert
-				inserted = len(records)
-				return WriteResult(written=inserted, destination="mydb")
+    def write(self, records: list[ChunkRecord]) -> WriteResult:
+        # Map records to your storage schema, then insert.
+        inserted = len(records)
+        return WriteResult(written=inserted, destination="mydb")
 ```
 
-Config example:
+Configuration example:
 
 ```yaml
 writer:
-	kind: mydb
+  kind: mydb
 ```
 
-Tip: start by copying `OpenIngest/writers/oracle23ai.py` or `OpenIngest/writers/jsonl.py` and replacing only the mapping + write logic.
+Tip: Start by copying `OpenIngest/writers/oracle23ai.py` or `OpenIngest/writers/jsonl.py` and replacing the mapping and write logic.
 
 ## Quick Start
 
@@ -179,12 +192,12 @@ npm run dev
 ### CLI
 
 ```bash
-openingest-ingest /path/to/file.pdf --metadata "{\"app_id\":\"10\"}"
+openingest-ingest /path/to/file.pdf --metadata '{"app_id":"10"}'
 ```
 
 Accepted sources: `.pdf`, `.docx`.
 
-### Common environment variables
+### Common Environment Variables
 
 ```bash
 OPENAI_API_KEY=...
