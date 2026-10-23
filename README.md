@@ -1,3 +1,4 @@
+<img src="assets-for-github/logo.svg" alt="Logo" width="200">
 # OpenIngest
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](./pyproject.toml)
